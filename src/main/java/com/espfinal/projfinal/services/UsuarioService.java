@@ -15,8 +15,6 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    // Inyección por constructor: buena práctica, cumple D de SOLID
-    // (el Service depende de la interfaz UsuarioRepository, no de una implementación)
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }

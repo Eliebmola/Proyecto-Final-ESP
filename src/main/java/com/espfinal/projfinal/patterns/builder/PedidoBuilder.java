@@ -4,6 +4,7 @@ import com.espfinal.projfinal.entities.DetallePedido;
 import com.espfinal.projfinal.entities.Pedido;
 import com.espfinal.projfinal.entities.Producto;
 import com.espfinal.projfinal.entities.Usuario;
+import com.espfinal.projfinal.patterns.singleton.ConfiguracionTienda;
 
 public class PedidoBuilder {
     private Pedido pedido;
@@ -19,9 +20,20 @@ public class PedidoBuilder {
 
     public PedidoBuilder conTipoEnvio(String tipoEnvio) {
         pedido.setTipoEnvio(tipoEnvio);
-        // Regla de negocio: el costo de envío depende del tipo
-        double costo = tipoEnvio.equalsIgnoreCase("EXPRESS") ? 12000.0 : 5000.0;
+
+        ConfiguracionTienda config =
+                ConfiguracionTienda.getInstancia();
+
+        double costo;
+
+        if (tipoEnvio.equalsIgnoreCase("EXPRESS")) {
+            costo = config.getCostoEnvioExpress();
+        } else {
+            costo = config.getCostoEnvioNacional();
+        }
+
         pedido.setCostoEnvio(costo);
+
         return this;
     }
 

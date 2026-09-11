@@ -41,10 +41,10 @@ public class PedidoService {
         this.productoRepository = productoRepository;
         this.usuarioRepository = usuarioRepository;
 
-        // Factory Method: se instancia una sola vez, registra sus Creators internamente
+
         this.fabricadorPagos = new FabricadorPagos();
 
-        // Observer: se suscriben los observadores que reaccionarán a cambios de estado
+
         this.pedidoSubject = new PedidoSubject();
         this.pedidoSubject.suscribir(new NotificadorEmailObserver());
         this.pedidoSubject.suscribir(new LogEstadoObserver());
@@ -56,7 +56,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Usuario no encontrado con id: " + dto.usuarioId()));
 
-        // Builder: construcción paso a paso con validación incluida
+
         PedidoBuilder builder = new PedidoBuilder()
                 .conUsuario(usuario)
                 .conTipoEnvio(dto.tipoEnvio())
@@ -91,8 +91,7 @@ public class PedidoService {
                     "Solo se pueden procesar pagos de pedidos PENDIENTES. Estado actual: " + pedido.getEstado());
         }
 
-        // Factory Method + Strategy: se obtiene el Creator correcto y se procesa el pago
-        // sin que este metodo sepa si es Tarjeta, PSE o PayPal
+
         CreadorPago creador = fabricadorPagos.obtenerCreador(pedido.getMetodoPago());
         String resultadoPago = creador.procesarPago(pedido.getTotal());
 
@@ -109,7 +108,7 @@ public class PedidoService {
             throw new IllegalArgumentException("No se puede cancelar un pedido ya pagado");
         }
 
-        // Devolvemos el stock reservado
+
         pedido.getDetalles().forEach(detalle -> {
             Producto producto = detalle.getProducto();
             producto.setStock(producto.getStock() + detalle.getCantidad());
@@ -135,14 +134,13 @@ public class PedidoService {
                 .collect(Collectors.toList());
     }
 
-    // Metodo centralizado de cambio de estado: es el único lugar que
-    // toca pedido.setEstado() y notifica a los observadores.
+
     private void cambiarEstado(Pedido pedido, String nuevoEstado) {
         String estadoAnterior = pedido.getEstado();
         pedido.setEstado(nuevoEstado);
         pedidoRepository.save(pedido);
 
-        // Observer: todos los observadores suscritos reaccionan automáticamente
+
         pedidoSubject.notificarCambioEstado(pedido, estadoAnterior);
     }
 
