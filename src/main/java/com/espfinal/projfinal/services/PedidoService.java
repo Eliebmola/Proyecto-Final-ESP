@@ -71,7 +71,7 @@ public class PedidoService {
                 throw new StockInsuficienteException(
                         "Stock insuficiente para el producto: " + producto.getNombre());
             }
-            productoRepository.save(producto); // persiste el nuevo stock
+            productoRepository.save(producto);
 
             builder.agregarProducto(producto, detalleDTO.cantidad());
         }
